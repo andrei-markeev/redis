@@ -76,6 +76,8 @@ export abstract class BaseClient {
         });
 
         this.socket.on('close', (hadError) => {
+            if (hadError)
+                this.parser.handleDisconnect();
             /**
              * In addition to actively disconnecting the client or server, 
              * it will automatically reconnect 

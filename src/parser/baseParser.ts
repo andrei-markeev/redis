@@ -78,6 +78,15 @@ export default abstract class BaseParser extends EventEmitter {
         this.reset();
     }
 
+    handleDisconnect(): void {
+        while (this.callbacks.length > 0) {
+            const cb = this.callbacks.shift();
+            if (cb)
+                cb(new RedisError('Socket disconnected!'), undefined);
+        }
+        this.reset();
+    }
+
     /**
      * Reset parser status.
      */

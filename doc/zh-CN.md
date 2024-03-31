@@ -5,14 +5,14 @@
 ### 安装
 
 ```bash
-npm install @camaro/redis
+npm install @andrei-markeev/redis
 ```
 
 ### 使用
 
 ```js
 // 如果你想使用resp2，将`ClientV3`改为`ClientV2`
-const { ClientV3: Client } = require('@camaro/redis')
+const { ClientV3: Client } = require('@andrei-markeev/redis')
 const client = new Client();
 
 client.SET('foo', 'foo').then(() => {

@@ -1,9 +1,7 @@
 # Camaro Redis
 
-[![Azure DevOps builds](https://img.shields.io/azure-devops/build/camarojs/redis/1)](https://dev.azure.com/camarojs/redis/_build/latest?definitionId=1)
-[![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/camarojs/redis/1)](https://dev.azure.com/camarojs/redis/_build/latest?definitionId=1)
-[![npm](https://img.shields.io/npm/dm/@camaro/redis)](https://www.npmjs.com/package/@camaro/redis)
-[![GitHub stars](https://img.shields.io/github/stars/camarojs/redis)](https://github.com/camarojs/redis/stargazers)
+This is a fork of @camaro/redis, somewhat maintained (no new features, only bug fixes and security updates).
+The original project is now archived and is read-only, so no changes are possible.
 
 [中文文档说明](./doc/zh-CN.md)
 
@@ -23,14 +21,14 @@ The first redis client to support [resp3](https://github.com/antirez/RESP3/blob/
 ### Install
 
 ```bash
-npm install @camaro/redis
+npm install @andrei-markeev/redis
 ```
 
 ### Usage
 
 ```js
 // If you want to use resp2 ,change `ClientV3` to `ClientV2`.
-const { ClientV3: Client } = require('@camaro/redis')
+const { ClientV3: Client } = require('@andrei-markeev/redis')
 const client = new Client();
 
 client.SET('foo', 'foo').then(() => {

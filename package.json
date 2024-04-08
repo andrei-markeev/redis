@@ -1,6 +1,6 @@
 {
   "name": "@andrei-markeev/redis",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "main": "lib/index.js",
   "description": "Redis client for node, support resp3 and redis6. Fork of @camaro/redis.",
   "repository": {

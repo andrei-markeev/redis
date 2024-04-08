@@ -12,14 +12,15 @@ export interface IClientOptions {
     password?: string;
     reconnection?: boolean;
     tls?: SecureContextOptions;
-    logger?: (err: Error, reply: unknown, command: string, args?: string[]) => void
+    logger?: (err: Error, reply: unknown, command: string, args?: string[]) => void,
+    debugLogs?: boolean;
 }
 
 export type ProtoVer = 2 | 3;
 
 declare module 'net' {
     interface Socket {
-        pending: boolean
+        readonly pending: boolean
     }
 }
 
@@ -58,6 +59,8 @@ export abstract class BaseClient {
         const connectEventName = this.options.tls ? 'secureConnect' : 'connect';
         this.socket.on(connectEventName, async () => {
             this.attempts = 0;
+            if (this.options.debugLogs)
+                console.log('[REDIS] Connected. Sending QUEUE:', { queue: this.queue, callbacks: this.parser.callbacks.length });
             this.queue.forEach(elem => {
                 this.socket.write(elem);
             });
@@ -76,17 +79,20 @@ export abstract class BaseClient {
         });
 
         this.socket.on('close', (hadError) => {
-            if (hadError)
-                this.parser.handleDisconnect();
+            if (this.options.debugLogs)
+                console.log('[REDIS] Socket CLOSE event received!', hadError);
             /**
              * In addition to actively disconnecting the client or server, 
              * it will automatically reconnect 
              */
-            if (hadError && this.options.reconnection) {
+            if (this.options.reconnection) {
                 this.reconnect();
             }
         });
 
+        console.log('[REDIS] Parser state before init:', { callbacks: this.parser.callbacks.length, bufferLen: this.parser.buffer.length, offset: this.parser.offset });
+        this.parser.handleDisconnect();
+        this.queue = [];
         this.init().then(() => {
             this.handleConnect?.();
         }).catch(error => {
@@ -103,6 +109,8 @@ export abstract class BaseClient {
     private reconnect(): void {
         this.attempts++;
         setTimeout(() => {
+            if (this.options.debugLogs)
+                console.log('[REDIS] Reconnection attempt', this.attempts);
             this.socket.destroy();
             this.socket.unref();
             this.connect();
@@ -121,6 +129,7 @@ export abstract class BaseClient {
         cloneOptions.reconnection = options.reconnection !== false;
         cloneOptions.password = options.password;
         cloneOptions.logger = options.logger;
+        cloneOptions.debugLogs = options.debugLogs === true;
         if (options.tls) {
             cloneOptions.tls = {};
             Object.assign(cloneOptions.tls, options.tls);
